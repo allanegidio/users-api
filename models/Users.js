@@ -12,8 +12,16 @@ export default (sequelize, DataType) => {
       validate: {
         notEmpty: true
       }
-    }
+    },
+
+    email: {
+      type: DataType.STRING,
+      allowNull: false,
+      validade: {
+        notEmpty: true
+      }
+    },
   });
 
   return Users;
-}
+};
