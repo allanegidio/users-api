@@ -1,4 +1,4 @@
-describe('User Books', () => {
+describe('User Contract Test', () => {
     const Users = app.datasource.models.Users;
     const defaultUsers = {
       id: 1,
@@ -57,7 +57,7 @@ describe('User Books', () => {
               email: 'newuser@outlook.com'
             };
 
-            const user = Joi.object().keys({
+            const userContract = Joi.object().keys({
               id: Joi.number(),
               name: Joi.string(),
               email: Joi.string(),
@@ -68,7 +68,7 @@ describe('User Books', () => {
             request.post('/users')
                    .send(newUser)
                    .end((error, res) => {
-                      joiAssert(res.body, user);
+                      joiAssert(res.body, userContract);
                       done(error);
                    });
         });

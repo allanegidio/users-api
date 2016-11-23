@@ -1,4 +1,4 @@
-describe('User Books', () => {
+describe('Users Test Integration', () => {
     const Users = app.datasource.models.Users;
     const defaultUsers = {
       id: 1,

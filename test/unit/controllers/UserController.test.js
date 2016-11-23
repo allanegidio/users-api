@@ -60,7 +60,8 @@ describe('Controllers: Users', () => {
       };
 
       const requestBody = {
-          nome: 'New User'
+          nome: 'New User',
+          email: 'newuser@outlook.com',
       };
 
       const expectedUser = {

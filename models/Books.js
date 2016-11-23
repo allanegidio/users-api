@@ -1,5 +1,5 @@
 export default (sequelize, DataType) => {
-  const Users = sequelize.define('Users', {
+  const Books = sequelize.define('Books', {
     id: {
       type: DataType.INTEGER,
       primaryKey: true,
@@ -14,7 +14,7 @@ export default (sequelize, DataType) => {
       }
     },
 
-    email: {
+    description: {
       type: DataType.STRING,
       allowNull: false,
       validate: {
@@ -23,5 +23,5 @@ export default (sequelize, DataType) => {
     },
   });
 
-  return Users;
+  return Books;
 };

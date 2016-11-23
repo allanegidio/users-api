@@ -1,13 +1,15 @@
-const defaultResponse = (data,statusCode = 200) => ({
+import HttpStatus from 'http-status';
+
+const defaultResponse = (data,statusCode = HttpStatus.OK) => ({
   data: data,
   statusCode: statusCode
 });
 
-const errorResponse = (message, statusCode = 400) => defaultResponse({
+const errorResponse = (message, statusCode = HttpStatus.BAD_REQUEST) => defaultResponse({
   error: message
 }, statusCode);
 
-class UserController {
+class UsersController {
   constructor(Users){
     this.Users = Users;
   }
@@ -26,23 +28,23 @@ class UserController {
 
   createUser(user){
     return this.Users.create(user)
-                     .then(user => defaultResponse(user, 201))
-                     .catch(error => errorResponse(error.message, 422));
+                     .then(createdUser => defaultResponse(createdUser, HttpStatus.CREATED))
+                     .catch(error => errorResponse(error.message, HttpStatus.UNPROCESSABLE_ENTITY));
   }
 
   updateUser(user, id){
     return this.Users.update(user, { where: id })
                      .then(updatedUser => defaultResponse(updatedUser))
-                     .catch(error => errorResponse(error.message, 422));
+                     .catch(error => errorResponse(error.message, HttpStatus.UNPROCESSABLE_ENTITY));
   }
 
   deleteUser(id){
     return this.Users.destroy({where: id})
-                     .then(deletedUser => defaultResponse(deletedUser, 204))
-                     .catch(error => errorResponse(error.message, 422));
+                     .then(deletedUser => defaultResponse(deletedUser, HttpStatus.NO_CONTENT))
+                     .catch(error => errorResponse(error.message, HttpStatus.UNPROCESSABLE_ENTITY));
   }
 }
 
 
 
-export default UserController;
+export default UsersController;
