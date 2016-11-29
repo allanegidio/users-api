@@ -1,15 +1,33 @@
 describe('Book Contract Test', () => {
   const Books = app.datasource.models.Books;
-  const defaultBooks = {
+  const Users = app.datasource.models.Users;
+  const jwtSecret = app.config.jwtSecret;
+
+  const defaultBook = {
     id: 1,
     name: 'Default Book',
     description: 'default description of book'
   };
 
+  const defaultUser = {
+    name: 'Test User',
+    email: 'testuser@outlook.com',
+    password: 'test123'
+  };
+
+  let token;
+
   beforeEach((done) => {
-    Books.destroy({ where: {}})
-         .then(() => Books.create(defaultBooks))
-         .then(() => done());
+    Users.destroy({ where: {}})
+         .then(() => Users.create(defaultUser))
+         .then(user => {
+           Books.destroy({ where: {}})
+                .then(() => Books.create(defaultBook))
+                .then(() => {
+                  token = jwt.encode({ id: user.id}, jwtSecret);
+                  done();
+                });
+         });
   });
 
   describe('Route GET /books', () => {
@@ -24,6 +42,7 @@ describe('Book Contract Test', () => {
                            }));
 
       request.get('/books')
+             .set('Authorization', `JWT ${token}`)
              .end((error, res) => {
                joiAssert(res.body, booksList);
                done(error);
@@ -48,6 +67,7 @@ describe('Book Contract Test', () => {
       });
 
       request.post('/books')
+             .set('Authorization', `JWT ${token}`)
              .send(newBook)
              .end((error, res) => {
                joiAssert(res.body, bookContract);
@@ -67,6 +87,7 @@ describe('Book Contract Test', () => {
       });
 
       request.get('/books/1')
+             .set('Authorization', `${token}`)
              .end((error,res) => {
                joiAssert(res.body, bookContract);
                done(error);
@@ -76,7 +97,7 @@ describe('Book Contract Test', () => {
 
   describe('Route PUT /books/:id', () => {
     it('should update a book', (done) => {
-      const updateBook = {
+      const updatedBook = {
         id: 1,
         name: 'Book updated',
         description: 'description updated'
@@ -85,7 +106,8 @@ describe('Book Contract Test', () => {
       const updatedCount = Joi.array().items(1);
 
       request.put('/books/1')
-             .send(updateBook)
+             .set('Authorization', `JWT ${token}`)
+             .send(updatedBook)
              .end((error, res) => {
                joiAssert(res.body, updatedCount);
                done(error);
@@ -95,6 +117,7 @@ describe('Book Contract Test', () => {
     describe('Route DELETE /books/:id', () => {
       it('should delete a book', (done) => {
         request.delete('/books/1')
+               .set('Authorization', `JWT ${token}`)
                .end((error, res) => {
                  expect(res.statusCode).to.be.eql(204);
                  done(error);
